@@ -9,7 +9,7 @@ export PYTHONPATH="${REPO_ROOT}:${PYTHONPATH:-}"
 
 IMAGE_DIR=""
 JSON_IN=""
-MODEL_PATH=""
+MODEL_PATH="${MID_MAPPER_MODEL:-songjhPKU/Mid-Mapper}"
 OUTPUT_DIR="${REPO_ROOT}/outputs/mid_mapper"
 NUM_SPLITS=1
 LINE_WIDTH=4
@@ -28,14 +28,14 @@ REVERSIBLE_FILES_JSON=""
 
 usage() {
     cat <<EOF
-Usage: $0 --image_dir <raw_images> --json_in <bivp_json> [--model_path <qwen-vl-checkpoint>] [options]
+Usage: $0 --image_dir <raw_images> --json_in <bivp_json> [--model_path <hf_id_or_local_path>] [options]
 
 Required:
   --image_dir DIR          Original reaction images.
   --json_in JSON           BIVP/MolYOLO JSON with molecule bboxes.
 
 Options:
-  --model_path PATH        Mid-Mapper Qwen2.5-VL checkpoint. Required unless --dry_run is set.
+  --model_path PATH        Mid-Mapper Qwen2.5-VL checkpoint. Default: songjhPKU/Mid-Mapper
   --output_dir DIR         Output root. Default: outputs/mid_mapper
   --num_splits N           Number of parallel parts/GPU workers. Default: 1
   --dry_run                Draw middle images and write empty IDT responses without loading model.

@@ -493,7 +493,7 @@ if __name__ == '__main__':
     parser.add_argument('--result_root_dir', type=str, required=True)
     parser.add_argument('--updated_json_path', type=str, default='',
                         help='写回新增 identifiers 字段后的完整 JSON 输出路径')
-    parser.add_argument('--model_path', type=str, required=False, default='')
+    parser.add_argument('--model_path', type=str, required=False, default='songjhPKU/Mid-Mapper')
     parser.add_argument('--line_width', type=int, default=3)
     # 去除 scale_factor / image_downscale / dpi 相关参数（不再缩放）
     parser.add_argument('--min_font_size', type=int, default=24)

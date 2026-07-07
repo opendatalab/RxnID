@@ -6,7 +6,7 @@ Mid-Mapper recognizes molecule identifiers from BIVP/MolYOLO-detected molecule b
 
 - `--image_dir`: original reaction images.
 - `--json_in`: BIVP/MolYOLO JSON after bbox-id mapping. The JSON should contain an `images` list, and each image item should include `file_name`, `bboxes`, and optionally `reactions`.
-- `--model_path`: Qwen2.5-VL Mid-Mapper checkpoint for recognizing identifiers from blue-box images.
+- `--model_path`: Qwen2.5-VL Mid-Mapper checkpoint for recognizing identifiers from blue-box images. The default Hugging Face id is `songjhPKU/Mid-Mapper`.
 
 The BIVP detector itself is not vendored here. Follow the RxnCaption/MolYOLO release for detection weights and code.
 
@@ -16,7 +16,7 @@ The BIVP detector itself is not vendored here. Follow the RxnCaption/MolYOLO rel
 bash scripts/run_mid_mapper.sh \
     --image_dir /path/to/raw_images \
     --json_in /path/to/bivp_mapped.json \
-    --model_path /path/to/mid_mapper_qwen_checkpoint \
+    --model_path songjhPKU/Mid-Mapper \
     --num_splits 4 \
     --output_dir outputs/mid_mapper
 ```
@@ -62,7 +62,7 @@ python -m rxnid.mid_mapper.infer_identifiers \
     --middle_root_dir outputs/mid_mapper/part_0/middle_images \
     --result_root_dir outputs/mid_mapper/part_0/results \
     --updated_json_path outputs/mid_mapper/part_0/final_part_0.json \
-    --model_path /path/to/mid_mapper_qwen_checkpoint
+    --model_path songjhPKU/Mid-Mapper
 
 python -m rxnid.mid_mapper.assign_identifiers \
     --merged_input_json outputs/mid_mapper/final_merged_output_with_identifiers_merged.json \
@@ -78,4 +78,4 @@ python -m rxnid.mid_mapper.create_training_jsonl \
 
 ## Model Checkpoint
 
-The Mid-Mapper identifier-recognition checkpoint is a separate model artifact from the main RxnID parser. Use any compatible local checkpoint or Hugging Face model id with `--model_path`.
+The Mid-Mapper identifier-recognition checkpoint is a separate model artifact from the main RxnID parser. The release placeholder is [songjhPKU/Mid-Mapper](https://huggingface.co/songjhPKU/Mid-Mapper). Use `--model_path /path/to/local_checkpoint` if you need to run from a local copy before the Hugging Face checkpoint is fully uploaded.

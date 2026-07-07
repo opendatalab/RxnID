@@ -6,7 +6,7 @@
 
 **Molecular Identifier Visual Prompt and Verifiable Reinforcement Learning for Chemical Reaction Diagram Parsing**
 
-[Project Page](https://chuangwang123.github.io/RxnID/) | [arXiv](https://arxiv.org/abs/2603.15011) | [Model](https://huggingface.co/songjhPKU/RxnID) | Dataset: coming soon | License: CC BY-NC 4.0
+[Project Page](https://chuangwang123.github.io/RxnID/) | [arXiv](https://arxiv.org/abs/2603.15011) | [Model](https://huggingface.co/songjhPKU/RxnID) | [Mid-Mapper](https://huggingface.co/songjhPKU/Mid-Mapper) | Dataset: coming soon | License: CC BY-NC 4.0
 
 RxnID parses chemical reaction diagrams into structured reaction JSON. It uses **Identifier as Visual Prompting (IdtVP)** to anchor molecules by chemical identifiers, and **Re3-DAPO** to optimize reaction-level verifiable rewards during reinforcement learning.
 
@@ -131,12 +131,12 @@ Run identifier recognition, identifier assignment/rendering, and IdtVP JSONL cre
 bash scripts/run_mid_mapper.sh \
     --image_dir /path/to/raw_images \
     --json_in /path/to/bivp_mapped.json \
-    --model_path /path/to/mid_mapper_qwen_checkpoint \
+    --model_path songjhPKU/Mid-Mapper \
     --num_splits 4 \
     --output_dir outputs/mid_mapper
 ```
 
-Use `--dry_run` for a no-model smoke test. See [docs/MID_MAPPER.md](docs/MID_MAPPER.md) for the full workflow and per-step commands.
+`--model_path` defaults to `songjhPKU/Mid-Mapper` after the checkpoint is uploaded. Use `--dry_run` for a no-model smoke test. See [docs/MID_MAPPER.md](docs/MID_MAPPER.md) for the full workflow and per-step commands.
 
 ## Training
 

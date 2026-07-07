@@ -12,7 +12,7 @@ def annotate_identifiers(
     image_dir: str,
     json_in: str,
     output_dir: str,
-    model_path: str = "",
+    model_path: str = "songjhPKU/Mid-Mapper",
     num_splits: int = 1,
     dry_run: bool = False,
     skip_assign: bool = False,
@@ -57,7 +57,7 @@ def main() -> None:
     parser.add_argument("--image_dir", required=True)
     parser.add_argument("--json_in", required=True)
     parser.add_argument("--output_dir", default="outputs/mid_mapper")
-    parser.add_argument("--model_path", default="")
+    parser.add_argument("--model_path", default="songjhPKU/Mid-Mapper")
     parser.add_argument("--num_splits", type=int, default=1)
     parser.add_argument("--dry_run", action="store_true")
     parser.add_argument("--skip_assign", action="store_true")

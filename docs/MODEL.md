@@ -30,12 +30,18 @@ bash scripts/run_inference.sh \
     --output_dir outputs/inference
 ```
 
-The Mid-Mapper identifier-recognition checkpoint is a separate model artifact. If it is available in your environment, pass its local path or Hugging Face id through `--model_path`:
+The Mid-Mapper identifier-recognition checkpoint is a separate model artifact hosted at:
+
+```text
+https://huggingface.co/songjhPKU/Mid-Mapper
+```
+
+After the checkpoint is uploaded, `scripts/run_mid_mapper.sh` uses `songjhPKU/Mid-Mapper` by default. You can still pass a local path or another Hugging Face id through `--model_path`:
 
 ```bash
 bash scripts/run_mid_mapper.sh \
     --image_dir /path/to/raw_images \
     --json_in /path/to/bivp_mapped.json \
-    --model_path /path/to/mid_mapper_qwen_checkpoint \
+    --model_path songjhPKU/Mid-Mapper \
     --output_dir outputs/mid_mapper
 ```
