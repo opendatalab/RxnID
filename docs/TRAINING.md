@@ -6,7 +6,7 @@ RxnID training has two stages: SFT and Re3-DAPO reinforcement learning.
 
 The paper uses Qwen2.5-VL style SFT through ms-swift. Prepare IdtVP JSONL files following [DATA.md](DATA.md), then run your ms-swift SFT command with the JSONL dataset.
 
-The repository does not pin a single SFT command because cluster launchers and model paths differ across environments. Keep the output checkpoint path; it is the input model for RL.
+The repository does not pin a single SFT command because hardware setup, distributed launchers, and model paths differ across environments. Keep the output checkpoint path; it is the input model for RL.
 
 ## 2. Convert Data for verl
 
@@ -59,4 +59,3 @@ python tools/compare_grpo_rewards.py \
     --fg_dir /path/to/finegrained_grpo_run \
     --output_dir outputs/reward_comparison
 ```
-

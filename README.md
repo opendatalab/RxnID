@@ -78,9 +78,8 @@ RxnID/
 └── docs/
     ├── DATA.md
     ├── MID_MAPPER.md
-    ├── MODEL_RELEASE.md
-    ├── TRAINING.md
-    └── OPEN_SOURCE_TODO.md
+    ├── MODEL.md
+    └── TRAINING.md
 ```
 
 ## Quick Start
@@ -163,9 +162,9 @@ bash scripts/run_rl_train.sh \
 
 See [docs/TRAINING.md](docs/TRAINING.md) for details.
 
-## Model Release
+## Model Weights
 
-The public checkpoint is hosted at [songjhPKU/RxnID](https://huggingface.co/songjhPKU/RxnID). Release/upload notes are in [docs/MODEL_RELEASE.md](docs/MODEL_RELEASE.md).
+The public checkpoint is hosted at [songjhPKU/RxnID](https://huggingface.co/songjhPKU/RxnID). See [docs/MODEL.md](docs/MODEL.md) for usage and download examples.
 
 ## MolYOLO
 

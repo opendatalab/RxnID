@@ -32,7 +32,7 @@ bash scripts/run_mid_mapper.sh \
     --output_dir outputs/mid_mapper_dry
 ```
 
-If you run on a Slurm cluster, allocate GPUs first or wrap the command with `srun`. The script itself runs one worker per split and sets `CUDA_VISIBLE_DEVICES` to the split index.
+On a multi-GPU machine, set `--num_splits` to the number of workers you want to run. The script starts one local worker per split and sets `CUDA_VISIBLE_DEVICES` to the split index. If you use a job scheduler, submit this command through your own scheduler wrapper.
 
 ## Outputs
 
@@ -76,17 +76,6 @@ python -m rxnid.mid_mapper.create_training_jsonl \
     --image_base_path outputs/mid_mapper/clean_previews
 ```
 
-## Optional OCR
+## Model Checkpoint
 
-`assign_identifiers` can use Tencent OCR to estimate identifier font sizes. It is disabled by default for open-source use. Enable it with `--use_tencent_ocr` and set:
-
-```bash
-export TENCENT_SECRET_ID=...
-export TENCENT_SECRET_KEY=...
-```
-
-Install Tencent Cloud's Python SDK only if you use this option.
-
-## Current Release Gap
-
-The code path is wired in this repository. The separate Mid-Mapper Qwen2.5-VL identifier-recognition checkpoint still needs a public release path if it should be reproducible outside the internal environment.
+The Mid-Mapper identifier-recognition checkpoint is a separate model artifact from the main RxnID parser. Use any compatible local checkpoint or Hugging Face model id with `--model_path`.

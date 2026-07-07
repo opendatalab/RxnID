@@ -1,16 +1,8 @@
 import argparse
-import json, re, os, base64, io, math
+import json, re, os, math
 from pathlib import Path
 from typing import Dict, Any, List, Tuple, Optional
 from PIL import Image, ImageDraw, ImageFont
-
-try:
-    from tencentcloud.common import credential
-    from tencentcloud.ocr.v20181119 import models as tx_models, ocr_client as tx_ocr_client
-except ImportError:
-    credential = None
-    tx_models = None
-    tx_ocr_client = None
 
 CONFIG = {
     "JSON_RESULTS_DIR": "",
@@ -34,12 +26,6 @@ CONFIG = {
     "OUT_IMAGE_DIR_ADDED": "annotated_images_added",
     "DEBUG_LOG": True,
     "IDT_MAX_CHAR_LEN": 0,
-    "USE_TENCENT_OCR": False,
-    "TENCENT_REGION": "ap-shanghai",
-    "OCR_CONFIDENCE_MIN": 60,
-    "OCR_FONT_HEIGHT_SCALE": 1.0,
-    "OCR_MATCH_NORMALIZE": True,
-    "OCR_MIN_MATCHED_IDT": 2,
     "USE_BOLD_FONT": True,
     "FONT_BOLD_PATH": "",
     "BOLD_DRAW_STROKE": 1,
@@ -120,30 +106,6 @@ CONFIG = {
     "IDT_FORCE_ALLOW_OVERLAP": False,       # 强制放置是否允许与其他 obstacle 重叠
     "IDT_FORCE_OVERLAP_PADDING": 1,         # 强制放置允许的最小像素间隔
 }
-
-_tx_client = None
-def _get_tx_client():
-    if not CONFIG.get("USE_TENCENT_OCR"):
-        return None
-    if credential is None or tx_ocr_client is None or tx_models is None:
-        return None
-    global _tx_client
-    if _tx_client is not None:
-        return _tx_client
-    sid = os.getenv("TENCENT_SECRET_ID")
-    sk  = os.getenv("TENCENT_SECRET_KEY")
-    if not sid or not sk:
-        if CONFIG["DEBUG_LOG"]:
-            print("[OCR] Missing TENCENT_SECRET_ID / TENCENT_SECRET_KEY env")
-        return None
-    try:
-        cred = credential.Credential(sid, sk)
-        _tx_client = tx_ocr_client.OcrClient(cred, CONFIG["TENCENT_REGION"])
-        return _tx_client
-    except Exception as e:
-        if CONFIG["DEBUG_LOG"]:
-            print(f"[OCR_INIT_ERR] {e}")
-        return None
 
 def _normalize_filename(fn: str) -> str:
     if not fn:
@@ -549,66 +511,7 @@ def force_place_label(
     return None
 
 def estimate_font_size(img_path: Path, img_h: int, existing_idts: List[str], bboxes: List[Dict[str, Any]] = None) -> int:
-    # 策略1：使用 OCR 检测到的文本高度
-    # 优先匹配 existing_idts，如果没有匹配到，则使用其他检测到的文本高度的中位数
-    if CONFIG.get("USE_TENCENT_OCR"):
-        if CONFIG["DEBUG_LOG"]:
-            print(f"  [OCR] Estimating font size for {img_path.name}...")
-        client = _get_tx_client()
-        if client:
-            try:
-                with open(img_path, "rb") as f:
-                    img_b64 = base64.b64encode(f.read()).decode()
-                req = tx_models.GeneralAccurateOCRRequest()
-                req.ImageBase64 = img_b64
-                if CONFIG["DEBUG_LOG"]:
-                    print(f"  [OCR] Sending request...")
-                resp = client.GeneralAccurateOCR(req)
-                if CONFIG["DEBUG_LOG"]:
-                    print(f"  [OCR] Response received.")
-                
-                norm_existing_idts = {s.strip().lower(): s for s in existing_idts} if existing_idts else {}
-                idt_heights = []
-                other_text_heights = []
-                
-                for text_detection in resp.TextDetections:
-                    detected_text = text_detection.DetectedText.strip().lower()
-                    poly = text_detection.Polygon
-                    if not poly: continue
-                    height = max(p.Y for p in poly) - min(p.Y for p in poly)
-                    if height <= 5: continue # Ignore noise
-                    
-                    if norm_existing_idts and detected_text in norm_existing_idts:
-                        idt_heights.append(height)
-                    else:
-                        other_text_heights.append(height)
-                
-                target_height = 0
-                source_type = ""
-                
-                if len(idt_heights) >= 1:
-                    # 优先：哪怕只匹配到一个 IDT，也以此为准
-                    target_height = sorted(idt_heights)[len(idt_heights)//2]
-                    source_type = f"Matched IDT (count={len(idt_heights)})"
-                elif len(other_text_heights) > 0:
-                    # 其次：如果没有 IDT，使用其他文本的中位数
-                    # 通常其他文本可能包含 caption，可能会比原子标号大，所以稍微保守一点取中位数
-                    target_height = sorted(other_text_heights)[len(other_text_heights)//2]
-                    source_type = f"General Text (count={len(other_text_heights)})"
-                
-                if target_height > 0:
-                    ocr_fs = int(target_height * CONFIG.get("OCR_FONT_HEIGHT_SCALE", 1.0))
-                    if CONFIG["DEBUG_LOG"]:
-                        print(f"  [OCR字体估算] 成功 [{source_type}], 原始高度: {target_height}, 估算字号: {ocr_fs}")
-                    min_fs = CONFIG.get("IDT_MIN_FONT", 14)
-                    max_fs = CONFIG.get("IDT_MAX_FONT", 42)
-                    return max(min_fs, min(max_fs, ocr_fs))
-                    
-            except Exception as e:
-                if CONFIG["DEBUG_LOG"]:
-                    print(f"  [OCR字体估算] 失败: {e}")
-
-    # 策略2：如果 OCR 失败或没有检测到任何文本，尝试根据 bbox 平均高度估算
+    # 策略1：根据 bbox 平均高度估算 identifier 字号
     bbox_based_fs = 0
     if bboxes:
         valid_heights = []
@@ -625,13 +528,12 @@ def estimate_font_size(img_path: Path, img_h: int, existing_idts: List[str], bbo
             if CONFIG["DEBUG_LOG"]:
                  print(f"  [BBox估算] 平均高度: {avg_h:.1f}, 估算字号: {bbox_based_fs}")
 
-    # 策略3：基于图片高度的保底估算
+    # 策略2：基于图片高度的保底估算
     # 稍微调大默认比例，从 0.02 -> 0.025
     ratio = 0.025 
     img_h_fs = int(img_h * ratio)
     
-    # 综合取舍：如果 bbox 估算有效，取两者中较大的一个，避免在只有小分子时字太小，或只有大图时字太大
-    # 但通常 bbox 估算更准
+    # 综合取舍：如果 bbox 估算有效，取两者中较大的一个
     fs = max(bbox_based_fs, img_h_fs) if bbox_based_fs > 0 else img_h_fs
 
     min_fs = CONFIG.get("IDT_MIN_FONT", 14)
@@ -1041,7 +943,6 @@ def _parse_args():
     parser.add_argument("--font_bold_path", default="", help="Optional bold TrueType font path.")
     parser.add_argument("--input_dpi", type=int, default=400)
     parser.add_argument("--target_dpi", type=int, default=400)
-    parser.add_argument("--use_tencent_ocr", action="store_true", help="Use Tencent OCR for font-size estimation.")
     parser.add_argument("--debug_log", action=argparse.BooleanOptionalAction, default=True)
     return parser.parse_args()
 
@@ -1058,7 +959,6 @@ def _apply_args(args):
         "FONT_PATH": args.font_path,
         "FONT_BOLD_PATH": args.font_bold_path,
         "USE_BOLD_FONT": bool(args.font_bold_path),
-        "USE_TENCENT_OCR": args.use_tencent_ocr,
         "MERGED_INPUT_JSON": args.merged_input_json,
         "OUTPUT_JSON_MERGED": args.output_json_merged,
         "IMAGE_ALT_ROOTS": args.image_alt_roots,

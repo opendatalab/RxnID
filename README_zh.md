@@ -142,9 +142,9 @@ bash scripts/run_rl_train.sh \
 
 详见 [docs/TRAINING.md](docs/TRAINING.md)。
 
-## 当前缺口
+## 模型权重
 
-Mid-Mapper 代码已接入；如果需要外部完整复现，还需要公开或提供 Mid-Mapper 的 Qwen2.5-VL identifier 识别 checkpoint。其它待补事项见 [docs/OPEN_SOURCE_TODO.md](docs/OPEN_SOURCE_TODO.md)。
+RxnID 主模型见 [docs/MODEL.md](docs/MODEL.md)。Mid-Mapper identifier 识别模型是单独的模型 artifact；如果你需要完整运行 identifier 识别，请通过 `--model_path` 传入对应 checkpoint。
 
 ## MolYOLO
 

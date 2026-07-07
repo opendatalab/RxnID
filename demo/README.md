@@ -10,7 +10,7 @@ MODEL=songjhPKU/RxnID bash demo/run_demo.sh
 
 Outputs are written to `outputs/demo/` by default.
 
-If the public checkpoint has not been uploaded yet, the script still shows the expected inference command shape; pass a local SFT or RL checkpoint through `MODEL`.
+To use a local SFT or RL checkpoint instead of the default Hugging Face model id, pass it through `MODEL`.
 
 Mid-Mapper smoke test without loading an identifier model:
 
