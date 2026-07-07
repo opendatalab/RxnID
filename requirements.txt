@@ -1,0 +1,14 @@
+pillow
+numpy
+scipy
+opencv-python
+matplotlib
+openpyxl
+pandas
+datasets
+tqdm
+ms-swift
+torch
+transformers
+accelerate
+huggingface_hub

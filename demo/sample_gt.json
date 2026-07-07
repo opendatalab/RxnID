@@ -1,0 +1,22 @@
+[
+  {
+    "file_name": "idt_sample_01.png",
+    "reactions": [
+      {
+        "reactants": [{"idt": "E-3"}],
+        "conditions": [{"text": "HCl (37% aqueous)\nAcetonitrile"}, {"text": "28 h, rt"}],
+        "products": [{"idt": "5"}]
+      }
+    ]
+  },
+  {
+    "file_name": "idt_sample_02.png",
+    "reactions": [
+      {"reactants": [{"idt": "1a"}], "conditions": [{"text": "+e⁻"}], "products": [{"idt": "1a•⁻"}]},
+      {"reactants": [{"idt": "1a'"}], "conditions": [{"text": "+e⁻"}], "products": [{"idt": "1a•²⁻"}]},
+      {"reactants": [{"idt": "1u"}], "conditions": [{"text": "+e⁻"}], "products": [{"idt": "1u•⁻"}]},
+      {"reactants": [{"idt": "1u'"}], "conditions": [{"text": "+ e⁻"}], "products": [{"idt": "1u•⁻"}]}
+    ]
+  }
+]
+

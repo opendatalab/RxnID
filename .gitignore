@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.venv/
+venv/
+outputs/*
+!outputs/.gitkeep
+data/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+wandb/
+logs/
+*.log
+
