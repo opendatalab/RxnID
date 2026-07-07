@@ -1,0 +1,31 @@
+{
+  "images": [
+    {
+      "file_name": "idt_sample_01.png",
+      "width": 2017,
+      "height": 943,
+      "bboxes": [
+        {"id": 1, "category_id": 1, "bbox": [240, 270, 340, 300]},
+        {"id": 2, "category_id": 1, "bbox": [1260, 270, 330, 300]}
+      ],
+      "reactions": [
+        {"reactants": [1], "conditions": [], "products": [2]}
+      ]
+    },
+    {
+      "file_name": "idt_sample_02.png",
+      "width": 1289,
+      "height": 3092,
+      "bboxes": [
+        {"id": 1, "category_id": 1, "bbox": [160, 250, 260, 260]},
+        {"id": 2, "category_id": 1, "bbox": [805, 250, 260, 260]},
+        {"id": 3, "category_id": 1, "bbox": [160, 930, 260, 260]},
+        {"id": 4, "category_id": 1, "bbox": [805, 930, 260, 260]}
+      ],
+      "reactions": [
+        {"reactants": [1], "conditions": [], "products": [2]},
+        {"reactants": [3], "conditions": [], "products": [4]}
+      ]
+    }
+  ]
+}

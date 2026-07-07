@@ -22,7 +22,7 @@ RxnID 面向化学反应图解析，将反应图片解析为结构化 reaction J
 ## 亮点
 
 - **IdtVP**：用分子 identifier 作为视觉提示，增强 VLM 对反应结构的理解。
-- **Mid-Mapper 接口**：identifier 标注模块先保持独立，当前仓库预留清晰接入口。
+- **Mid-Mapper**：从分子检测框中识别 identifier，并为缺失 identifier 的分子渲染虚拟 IDT。
 - **Re3-DAPO**：使用 Soft/Hybrid reaction-level reward 的 RLVR 训练。
 - **ScannedRxn**：面向历史扫描文献反应图的鲁棒性 benchmark。
 - **完整脚本**：包含推理 JSONL 构造、swift 输出转换、IdtVP 评测、verl 训练脚本。
@@ -49,10 +49,11 @@ RxnID/
 ├── rxnid/
 │   ├── build_inference_jsonl.py   # 构造 IdtVP 推理 JSONL
 │   ├── prompt.py                  # IdtVP prompt 模板
-│   ├── identifier.py              # Mid-Mapper 接入占位
+│   ├── identifier.py              # Mid-Mapper 兼容入口
 │   ├── evaluate_idtvp.py          # IdtVP JSON 的 Soft/Hybrid 评测
 │   ├── annotate_bivp.py           # BIVP baseline 打框工具
 │   ├── evaluate_bivp.py           # BIVP/RxnCaption bbox 格式评测
+│   ├── mid_mapper/                # identifier 识别和 IDT 渲染流程
 │   └── rl/reward.py               # verl 使用的 Re3-DAPO reward
 │
 ├── tools/
@@ -102,6 +103,21 @@ bash scripts/run_eval.sh \
 MODEL=songjhPKU/RxnID bash demo/run_demo.sh
 ```
 
+## Mid-Mapper Identifier 流程
+
+运行 identifier 识别、缺失 IDT 分配/渲染，并生成 IdtVP SFT JSONL：
+
+```bash
+bash scripts/run_mid_mapper.sh \
+    --image_dir /path/to/raw_images \
+    --json_in /path/to/bivp_mapped.json \
+    --model_path /path/to/mid_mapper_qwen_checkpoint \
+    --num_splits 4 \
+    --output_dir outputs/mid_mapper
+```
+
+可以用 `--dry_run` 做不加载模型的流程检查。完整说明见 [docs/MID_MAPPER.md](docs/MID_MAPPER.md)。
+
 ## 训练
 
 转换 verl parquet：
@@ -128,7 +144,7 @@ bash scripts/run_rl_train.sh \
 
 ## 当前缺口
 
-identifier 标注 / Mid-Mapper 代码还在等待同事交接，当前已在 [rxnid/identifier.py](rxnid/identifier.py) 预留接入点。其它待补事项见 [docs/OPEN_SOURCE_TODO.md](docs/OPEN_SOURCE_TODO.md)。
+Mid-Mapper 代码已接入；如果需要外部完整复现，还需要公开或提供 Mid-Mapper 的 Qwen2.5-VL identifier 识别 checkpoint。其它待补事项见 [docs/OPEN_SOURCE_TODO.md](docs/OPEN_SOURCE_TODO.md)。
 
 ## MolYOLO
 

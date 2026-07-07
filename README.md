@@ -22,7 +22,7 @@ RxnID parses chemical reaction diagrams into structured reaction JSON. It uses *
 ## Highlights
 
 - **IdtVP**: uses molecule identifiers such as `1a`, `2b`, or generated virtual IDs as visual anchors for VLM reasoning.
-- **Mid-Mapper interface**: leaves a clean standalone hook for the molecule-identifier annotation module.
+- **Mid-Mapper**: recognizes identifiers from detected molecule boxes and renders missing virtual IDTs for IdtVP.
 - **Re3-DAPO**: RLVR training with soft/hybrid reaction-level rewards.
 - **ScannedRxn**: benchmark for scanned historical reaction diagrams with real-world artifacts.
 - **Open pipeline**: inference JSONL building, swift inference conversion, IdtVP evaluation, and verl training scripts.
@@ -49,10 +49,11 @@ RxnID/
 ├── rxnid/
 │   ├── build_inference_jsonl.py   # Build IdtVP ms-swift inference JSONL
 │   ├── prompt.py                  # IdtVP prompt template
-│   ├── identifier.py              # Mid-Mapper integration placeholder
+│   ├── identifier.py              # Mid-Mapper compatibility entry point
 │   ├── evaluate_idtvp.py          # Soft/Hybrid evaluation for IdtVP JSON
 │   ├── annotate_bivp.py           # BIVP baseline annotation utility
 │   ├── evaluate_bivp.py           # BIVP/RxnCaption-style bbox evaluation
+│   ├── mid_mapper/                # Identifier recognition and IDT rendering pipeline
 │   └── rl/reward.py               # Re3-DAPO reward functions for verl
 │
 ├── tools/
@@ -65,6 +66,7 @@ RxnID/
 │   ├── run_inference.sh
 │   ├── run_eval.sh
 │   ├── prepare_data.sh
+│   ├── run_mid_mapper.sh
 │   └── run_rl_train.sh
 │
 ├── demo/
@@ -75,6 +77,7 @@ RxnID/
 │
 └── docs/
     ├── DATA.md
+    ├── MID_MAPPER.md
     ├── MODEL_RELEASE.md
     ├── TRAINING.md
     └── OPEN_SOURCE_TODO.md
@@ -121,6 +124,21 @@ Try the bundled sample images:
 MODEL=songjhPKU/RxnID bash demo/run_demo.sh
 ```
 
+## Mid-Mapper Identifier Pipeline
+
+Run identifier recognition, identifier assignment/rendering, and IdtVP JSONL creation:
+
+```bash
+bash scripts/run_mid_mapper.sh \
+    --image_dir /path/to/raw_images \
+    --json_in /path/to/bivp_mapped.json \
+    --model_path /path/to/mid_mapper_qwen_checkpoint \
+    --num_splits 4 \
+    --output_dir outputs/mid_mapper
+```
+
+Use `--dry_run` for a no-model smoke test. See [docs/MID_MAPPER.md](docs/MID_MAPPER.md) for the full workflow and per-step commands.
+
 ## Training
 
 Convert SFT JSONL files to verl parquet:
@@ -148,13 +166,6 @@ See [docs/TRAINING.md](docs/TRAINING.md) for details.
 ## Model Release
 
 The public checkpoint is hosted at [songjhPKU/RxnID](https://huggingface.co/songjhPKU/RxnID). Release/upload notes are in [docs/MODEL_RELEASE.md](docs/MODEL_RELEASE.md).
-
-## Identifier Module
-
-The Mid-Mapper / identifier annotation code is intentionally isolated. The placeholder lives at [rxnid/identifier.py](rxnid/identifier.py). Once the handoff code is ready, plug it into that module and make it output:
-
-- identifier-annotated images
-- optional per-image IDT vocabularies for `build_inference_jsonl.py`
 
 ## MolYOLO
 
