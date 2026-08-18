@@ -6,7 +6,7 @@
 
 **Molecular Identifier Visual Prompt and Verifiable Reinforcement Learning for Chemical Reaction Diagram Parsing**
 
-[项目主页](https://chuangwang123.github.io/RxnID/) | [arXiv](https://arxiv.org/abs/2603.15011) | [模型](https://huggingface.co/songjhPKU/RxnID) | [Mid-Mapper](https://huggingface.co/songjhPKU/Mid-Mapper) | 数据集：待更新 | License: CC BY-NC 4.0
+[项目主页](https://chuangwang123.github.io/RxnID/) | [arXiv](https://arxiv.org/abs/2603.15011) | [模型](https://huggingface.co/songjhPKU/RxnID) | [Mid-Mapper](https://huggingface.co/songjhPKU/Mid-Mapper) | [数据集](https://huggingface.co/datasets/songjhPKU/ScannedRxn) | License: CC BY-NC 4.0
 
 RxnID 面向化学反应图解析，将反应图片解析为结构化 reaction JSON。核心思路是 **Identifier as Visual Prompting (IdtVP)**：用分子 identifier（如 `1a`、`2b` 或虚拟 identifier）作为视觉锚点；同时用 **Re3-DAPO** 通过可验证的 reaction-level reward 做强化学习优化。
 
